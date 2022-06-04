@@ -32,6 +32,11 @@ public class AlfredTest {
         String senseiGreeting2 = alfredBot.guestGreeting();
         String senseiGreeting3 = alfredBot.guestGreeting();
 
+        // Sensei/Ninja Angry Alfred
+        String angryAlfred1 = alfredBot.angryAlfred();
+        String angryAlfred2 = alfredBot.angryAlfred();
+        String angryAlfred3 = alfredBot.angryAlfred();
+
         // Print the greetings to test.
         System.out.println(testGreeting);
         
@@ -47,5 +52,8 @@ public class AlfredTest {
         System.out.println(senseiGreeting1);
         System.out.println(senseiGreeting2);
         System.out.println(senseiGreeting3);
+        System.out.println(angryAlfred1);
+        System.out.println(angryAlfred2);
+        System.out.println(angryAlfred3);
     }
 }

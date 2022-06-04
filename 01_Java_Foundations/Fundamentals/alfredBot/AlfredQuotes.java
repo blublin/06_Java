@@ -96,7 +96,8 @@ public class AlfredQuotes {
 
     // https://stackoverflow.com/a/8065554/19170401
     // Returns a random integer representing an index of array passed in
-    public static int getRandom(String[] array) {
+    // Private as only usable from within this class
+    private int getRandom(String[] array) {
         // getRandom(String[]) :: signature
         // array is the parameter
 
@@ -105,9 +106,15 @@ public class AlfredQuotes {
         return rnd;
     }
     
-	// NINJA BONUS
-	// See the specs to overload the guessGreeting method
-    // SENSEI BONUS
-    // Write your own AlfredQuote method using any of the String methods you have learned!
+    // Sensei/Ninja bonus method
+    public String angryAlfred() {
+        String[] youWontLikeMeWhenImMad = {
+            "This is utter nonsense!",
+            "You, sir, are an imbecile!",
+            "I will not be treated this way!"
+        };
+
+        return youWontLikeMeWhenImMad[getRandom(youWontLikeMeWhenImMad)].toUpperCase();
+    }
 }
 
