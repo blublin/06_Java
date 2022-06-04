@@ -16,7 +16,7 @@ public class AlfredQuotes {
         // Simple Date Format returns string
         // Convert to primitive int
         // https://stackoverflow.com/a/5585876/19170401
-        int currentHour = Integer.parseInt(sdFormatter.format(new Date()));
+        int currentHour = Byte.parseByte(sdFormatter.format(new Date()));
         
         // Test validity and type
         // System.out.println("Current Hour: " + currentHour);
@@ -24,6 +24,7 @@ public class AlfredQuotes {
         // System.out.println(sdFormatter.format(new Date()).getClass().getSimpleName());
 
         String dayPeriod;
+        // switch statements cannot have bool cases, need if else
         if (currentHour > 20){
             dayPeriod = "night";
         }
