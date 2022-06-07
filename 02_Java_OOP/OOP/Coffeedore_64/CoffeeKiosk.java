@@ -65,15 +65,13 @@ public class CoffeeKiosk {
         System.out.println("| ---- Please enter user credentials");
         System.out.printf("username: ");
         String userName = System.console().readLine();
-        System.out.println();
         System.out.printf("password: ");
         System.console().readLine();
-        System.out.println();
+        System.out.println("\nWelcome " + userName);
         
         System.out.println("Would you like to enter a new item: (y to continue, anything else to finish)");
         String continueInput = System.console().readLine();
         
-        // Write a while loop to collect all user's order items
         while(continueInput.equals("y")) {
             
             System.out.printf("Enter new item name: ");
