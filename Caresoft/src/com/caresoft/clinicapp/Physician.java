@@ -24,7 +24,7 @@ public class Physician extends User implements HIPAACompliantUser {
     // INTERFACE OVERRIDES
 	@Override
 	public boolean assignPin(int pin) {
-		if (pin >= 1000 && pin <= 9999) {
+		if (pin >= 1_000 && pin <= 9_999) {
 			setPin(pin);
 			return true;
 		}
