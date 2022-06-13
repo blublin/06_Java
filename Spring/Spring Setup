@@ -59,7 +59,7 @@ Spring Project
 		2. Bootstrap in <head>:
 			<!-- for Bootstrap CSS -->
 			<link rel="stylesheet" href="/webjars/bootstrap/css/bootstrap.min.css" />
-		3. ${variable}
+		3. ${variable} from server
 		4. c: syntax for semi-Java
 		5. <% %> java lines
 			a. <%= %> in-line java (Ex: <%= i %> in for loop, <%= new Date() %>)
