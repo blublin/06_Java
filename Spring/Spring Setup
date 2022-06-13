@@ -1,0 +1,118 @@
+Spring Project
+
+1. Alt + Shift + N : Spring Starter Project
+
+
+2.	Setup:
+	a. Name = Artifact (camel case)
+	b. Java Version 8
+	c. Packaging: War
+	d. Group/Package: com.name.projectName
+	e. Save Location: Java/Spring/projectName
+	f. Dependencies: Spring Web, Spring Boot DevTools
+
+
+3. src/main/resources > application.properties:
+	a. spring.mvc.view.prefix=/WEB-INF/
+
+
+4. Dependencies:
+		<!-- Java Server Page (.jsp) -->
+		<dependency>
+			<groupId>org.apache.tomcat.embed</groupId>
+			<artifactId>tomcat-embed-jasper</artifactId>
+		</dependency>
+		<!-- Java Server Page Tags Library -->
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>jstl</artifactId>
+		</dependency>
+		<!-- webjars locator dependency enables auto-detection of the version, 
+			so your .jsp file links are version-agnostic in case you update the versions 
+			here in your pom later -->
+		<dependency>
+			<groupId>org.webjars</groupId>
+			<artifactId>webjars-locator</artifactId>
+			<version>0.30</version>
+		</dependency>
+
+		<!-- BOOTSTRAP DEPENDENCIES -->
+		<dependency>
+			<groupId>org.webjars</groupId>
+			<artifactId>bootstrap</artifactId>
+			<version>5.0.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.webjars</groupId>
+			<artifactId>jquery</artifactId>
+			<version>3.6.0</version>
+		</dependency>
+
+	
+5. src > main > webapp
+	a. new directory: WEB-INF
+	
+	b. all Dynamic views created in here (.jsp)
+		1. <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+			a. Java Server Page Tag library
+			b. Top of any .jsp file that needs tags
+		2. Bootstrap in <head>:
+			<!-- for Bootstrap CSS -->
+			<link rel="stylesheet" href="/webjars/bootstrap/css/bootstrap.min.css" />
+		3. ${variable}
+		4. c: syntax for semi-Java
+		5. <% %> java lines
+			a. <%= %> in-line java (Ex: <%= i %> in for loop, <%= new Date() %>)
+
+
+6. src/main/java
+	a. New package: +.models
+		1. Non-annotated class Models (item, user, event, dojo, ninja, etc)
+		2. Ensure package export at top
+		
+	b. New package: +.controllers
+		1. Annotations
+			a. @RequestMapping("") (above method, like app.route()
+				1. value="route"
+				2. method="RequestMethod.GET
+				3. optional path variables: {variable} (/route/{variable})
+				
+			b. @RequestParam(value, required), String searchQuery (in method signature)
+				1. Method signature :: value stored locally in searchQuery
+				2. value="q" :: string inserted after route (route?value=)
+				3. required=false (default true)
+				
+			c. @PathVariable("variable") String variable (in method signature)
+				1. Method signature
+				2. match route variable, store as String variable
+				3. If other than string, try / catch
+					A. type variable
+					B. try variable = casted type
+					C. catch return some error message
+					
+			d. @RestController class
+				1. string, JSON, xml returns
+				
+			e. @Controller class
+				1. returns view (.jsp page)
+				
+		2. Model model
+			a. a map interface that passes key-value pairs to the view
+			b. public String methodName(Model model)
+			b. model.addAttribute("viewVariable", data)
+		
+		3. HttpSession session
+			a. Method parameter
+			b. import javax.servlet.http.HttpSession
+			c. creates client cookie automatically
+			d. session.setAttribute("key", value)
+			e. session.getAttribute("key")
+				1. Need to cast val as it's stored as Object data type
+					A. String value = (String) session.getAttribute("key")
+					A. Integer value = (Integer) session.getAttribute("key")
+				2. Use if null to check if the key exists before doing creating/updating
+				
+7. src/main/resources > static
+	a. CSS, JavaScript
+		1. static/css/style.css
+		2. static/js/app.js
