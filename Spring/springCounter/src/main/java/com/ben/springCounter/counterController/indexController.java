@@ -17,6 +17,7 @@ public class indexController {
 			Integer c = (Integer) session.getAttribute("count");
 			session.setAttribute("count", c + 1);
 		}
+		
 		return "<h1 style='margin: 30px 0; text-align: center;'>Welcome User!</h1>";
 	}
 	
