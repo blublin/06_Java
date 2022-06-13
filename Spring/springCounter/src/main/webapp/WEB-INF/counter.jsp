@@ -14,13 +14,6 @@
 	<br />
 	<a href="http://localhost:8080/double">Try double or double</a>
 	<br />
-	<button onclick="resetCounter()">Reset Counter</button>
+	<a href="reset" class="button">Reset</a>
 </body>
-<!-- 
-<script type="text/javascript">
-	const resetCounter = (event) => {
-		<% session.setAttribute("count", 0); %>
-	}
-</script>
- -->
 </html>
