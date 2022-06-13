@@ -4,6 +4,8 @@
 <!DOCTYPE html>
 <html>
 <head>
+<!-- for Bootstrap CSS -->
+<link rel="stylesheet" href="/webjars/bootstrap/css/bootstrap.min.css" />
 <meta charset="ISO-8859-1">
 <title>Counter Check</title>
 </head>
@@ -14,6 +16,6 @@
 	<br />
 	<a href="http://localhost:8080/double">Try double or double</a>
 	<br />
-	<a href="reset" class="button">Reset</a>
+	<a href="reset" class="btn btn-primary">Reset</a>
 </body>
 </html>
