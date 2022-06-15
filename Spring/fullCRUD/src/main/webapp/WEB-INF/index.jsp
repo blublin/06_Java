@@ -34,10 +34,17 @@
 			<tbody>
 				<c:forEach items="${expenses}" var="e">
 					<tr>
-						<td>${e.getName() }</td>
+						<td><a href="/expenses/${e.getId() }">${e.getName() }</a></td>
 						<td>${e.getVendor() }</td>
 						<td>$${e.getAmount() }</td>
-						<td><a href="/expenses/${e.getId() }/edit">Edit</a></td>
+						<td class="d-flex justify-content-evenly">
+						<a class="btn btn-success" href="/expenses/${e.getId() }/edit">Edit</a>
+							||
+							<form action="/expenses/${e.getId() }" method="post">
+								<input type="hidden" name="_method" value="delete">
+								<input type="submit" value="Delete" class="btn btn-danger">
+							</form>
+						</td>
 					</tr>
 				</c:forEach>
 			</tbody>

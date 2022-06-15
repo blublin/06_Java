@@ -1,6 +1,5 @@
 package com.ben.fullCRUD.controllers;
 
-import java.awt.print.Book;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -9,12 +8,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.ben.fullCRUD.models.Expense;
 import com.ben.fullCRUD.services.ExpenseService;
@@ -25,6 +24,7 @@ public class ExpenseController {
 	@Autowired
 	private ExpenseService expServ;
 
+//	|--- INDEX ---|
 	@GetMapping("/")
 	public String index(@ModelAttribute("expense") Expense exp,
 						Model model) {
@@ -33,6 +33,7 @@ public class ExpenseController {
 		return "index.jsp";
 	}
 	
+//	|--- CREATE ROUTE HANDLER ---|
 	@PostMapping("/")
 	public String handleForm(@Valid @ModelAttribute("expense") Expense exp,
 			BindingResult result) {
@@ -46,6 +47,19 @@ public class ExpenseController {
 		}
 	}
 	
+	@GetMapping("/expenses/{id}")
+	public String oneExpense(@PathVariable Long id, Model model) {
+		Expense exp = expServ.readOne(id);
+		if (exp != null) {
+			model.addAttribute("exp", exp);
+			return "oneExpense.jsp";
+		}
+		else {
+			return "redirect:/";
+		}
+	}
+	
+//	|--- EDIT 1 ---|
 	@GetMapping("/expenses/{id}/edit")
 	public String edit(@PathVariable Long id, Model model) {
 		Expense exp = expServ.readOne(id);
@@ -58,6 +72,7 @@ public class ExpenseController {
 		}
 	}
 	
+//	|--- UPDATE ROUTE HANDLER ---|
     @PutMapping("/expenses/{id}")
     public String update(@Valid @ModelAttribute("expense") Expense exp, BindingResult result) {
         if (result.hasErrors()) {
@@ -67,4 +82,10 @@ public class ExpenseController {
             return "redirect:/";
         }
     }
+//  |--- DELETE ROUTE HANDLER ---|
+	@DeleteMapping("/expenses/{id}")
+	public String destroy(@PathVariable Long id) {
+	    expServ.deleteOne(id);
+	    return "redirect:/";
+	}
 }
