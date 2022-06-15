@@ -21,32 +21,14 @@
 </head>
 <body>
 	<div class="container p-3 mx-auto">
-		<h1 class="text-center">Save Travels</h1>
-		<table class="table text-center">
-			<thead>
-				<tr>
-					<td>Expense</td>
-					<td>Vendor</td>
-					<td>Amount</td>
-					<td>Actions</td>
-				</tr>
-			</thead>
-			<tbody>
-				<c:forEach items="${expenses}" var="e">
-					<tr>
-						<td>${e.getName() }</td>
-						<td>${e.getVendor() }</td>
-						<td>$${e.getAmount() }</td>
-						<td><a href="/expenses/${e.getId() }/edit">Edit</a></td>
-					</tr>
-				</c:forEach>
-			</tbody>
-		</table>
-		<br /> <br />
 		<div class="container w-75">
-			<h1 class="text-center">Add an expense:</h1>
-			<form:form action="/" method="post" modelAttribute="expense"
+		<div class="d-flex justify-content-between align-items-center">
+			<h1 class="text-center">Edit an expense:</h1>
+			<a class="display-5" href="/">Go Home</a>
+		</div>
+			<form:form action="/expenses/${expense.id }" method="post" modelAttribute="expense"
 				class="d-flex flex-column align-items-center border border-3 border-dark">
+				<input type="hidden" name="_method" value="put">
 				<p>
 					<form:errors path="name" />
 				</p>
@@ -81,7 +63,6 @@
 				<input type="submit" value="Submit" class="col-3" />
 			</form:form>
 		</div>
-
 	</div>
 </body>
 </html>

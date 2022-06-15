@@ -1,5 +1,6 @@
 package com.ben.fullCRUD.controllers;
 
+import java.awt.print.Book;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -10,7 +11,10 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.ben.fullCRUD.models.Expense;
 import com.ben.fullCRUD.services.ExpenseService;
@@ -41,4 +45,26 @@ public class ExpenseController {
 			return "redirect:/";
 		}
 	}
+	
+	@GetMapping("/expenses/{id}/edit")
+	public String edit(@PathVariable Long id, Model model) {
+		Expense exp = expServ.readOne(id);
+		if (exp != null) {
+			model.addAttribute("expense", exp);
+			return "edit.jsp";
+		}
+		else {
+			return "redirect:/";
+		}
+	}
+	
+    @PutMapping("/expenses/{id}")
+    public String update(@Valid @ModelAttribute("expense") Expense exp, BindingResult result) {
+        if (result.hasErrors()) {
+            return "/books/edit.jsp";
+        } else {
+            expServ.updateOne(exp);
+            return "redirect:/";
+        }
+    }
 }

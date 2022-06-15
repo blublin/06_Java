@@ -29,4 +29,8 @@ public class ExpenseService {
 	public Expense create(Expense e) {
 		return expRepo.save(e);
 	}
+	
+	public Expense updateOne(Expense e) {
+		return expRepo.save(e);
+	}
 }
