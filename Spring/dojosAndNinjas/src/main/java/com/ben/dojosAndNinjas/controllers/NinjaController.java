@@ -41,8 +41,10 @@ public class NinjaController {
 	
 	@PostMapping("/ninjas/processForm")
 	public String processForm(@Valid @ModelAttribute("ninja") Ninja ninja,
-			BindingResult res) {
+			BindingResult res, Model model) {
 		if (res.hasErrors()) {
+			List<Dojo> dojos = dServ.getAll();
+			model.addAttribute("dojos", dojos);
 			return "newNinja.jsp";
 		}
 		else {
