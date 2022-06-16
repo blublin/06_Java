@@ -120,22 +120,24 @@ Spring Project Template/Notes
 			@Service
 		1. New Class
 			a. CRUD functionality
-				1. Find ALL returns a List<Model>
-				2. Find One returns an Optional.
+				1. @AutoWired private Repo repo
+				2. Find ALL returns a List<Model>
+				3. Find One returns an Optional.
 					A. optional.isPresent() (true if found or false)
 					B. optional.get() returns the found data
-				3. Create and Update both call modelRepo.save(model object)
-				4. Delete doesn't return anything
+				4. Create and Update both call modelRepo.save(model object)
+				5. Delete doesn't return anything
 		
 	c. New package: +.models
 		1. @Entity
 		2. @Table(name="tableName")
 		3.	Private Member variables are table columns
+				@Autowired Service service
 			a. Annotated by JPA Validation
 				@Entity: represents an entity model for our application
 				@Table: sets this as a table in the database
 				@Id: sets this as the primary key
-				@GeneratedValue: sets this as an auto-incrementing value
+				@GeneratedValue: sets this as an auto-incrementing value  (@GeneratedValue(strategy = GenerationType.IDENTITY))
 				@Size adds validation that the column must be in the specified range
 				@Min adds validation that the column must be at least the specified value
 				@Max
@@ -144,6 +146,23 @@ Spring Project Template/Notes
 				@NotNull adds validation that the column must be null
 				@PrePersist runs the method right before the object is created
 				@PreUpdate runs a method when the object is modified
+				
+				
+				// This will not allow the createdAt column to be updated after creation
+				@Column(updatable=false)
+				@DateTimeFormat(pattern="yyyy-MM-dd")
+				private Date createdAt;
+				@DateTimeFormat(pattern="yyyy-MM-dd")
+				private Date updatedAt;
+				
+				@PrePersist
+				protected void onCreate(){
+					this.createdAt = new Date();
+				}
+				@PreUpdate
+				protected void onUpdate(){
+					this.updatedAt = new Date();
+				}
 		
 	d. New package: +.controllers
 		1. Annotations

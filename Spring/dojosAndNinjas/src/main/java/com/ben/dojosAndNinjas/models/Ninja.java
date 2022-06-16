@@ -1,4 +1,4 @@
-package com.ben.fullCRUD.models;
+package com.ben.dojosAndNinjas.models;
 
 import java.util.Date;
 
@@ -13,37 +13,33 @@ import javax.persistence.ManyToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
-//import javax.validation.constraints.DecimalMin;
+import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.springframework.format.annotation.DateTimeFormat;
+
 @Entity
-@Table(name="expenses")
-public class Expense {
+@Table(name="ninjas")
+public class Ninja {
 //	|--- MEMBER VARIABLES (COLUMNS) ---|
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+	private Long id;
     
     @NotNull
-    @Size(min = 5, max = 200)
-    private String name;
+    @Size(min = 2, max = 30)
+	private String firstName;
     
     @NotNull
-    @Size(min = 5, max = 200)
-    private String vendor;
+    @Size(min = 2, max = 30)
+	private String lastName;
     
     @NotNull
-//    @DecimalMin("0.0")
-    @Min(0)
-    private double amount;
-    
-    @NotNull
-    @Size(min = 10, max = 1000)
-    private String description;
-    
+    @Min(value=18, message="You must be at least 18 years old to be a ninja!")
+    @Max(value=115, message="It's time to take a break sensei")
+	private int age;
     // This will not allow the createdAt column to be updated after creation
     @Column(updatable=false)
     @DateTimeFormat(pattern="yyyy-MM-dd")
@@ -51,12 +47,15 @@ public class Expense {
     @DateTimeFormat(pattern="yyyy-MM-dd")
     private Date updatedAt;
     
+//  MANY TO ONE
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="dojo_id")
+    private Dojo dojo;
     
-//    |--- CONSTRUCTOR ---|
-    public Expense() {
-    }
+//  |--- CONSTRUCTOR ---|
+    public Ninja() {}
     
-    // other getters and setters removed for brevity
+//  |--- DATE TIME ---|
     @PrePersist
     protected void onCreate(){
         this.createdAt = new Date();
@@ -66,8 +65,7 @@ public class Expense {
         this.updatedAt = new Date();
     }
 
-    
-//    |--- GETTERS AND SETTERS ---|
+//  |--- GETTERS AND SETTERS ---|
 	public Long getId() {
 		return id;
 	}
@@ -76,28 +74,36 @@ public class Expense {
 		this.id = id;
 	}
 
-	public String getName() {
-		return name;
+	public String getFirstName() {
+		return firstName;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
 	}
 
-	public String getVendor() {
-		return vendor;
+	public String getLastName() {
+		return lastName;
 	}
 
-	public void setVendor(String vendor) {
-		this.vendor = vendor;
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
 	}
 
-	public double getAmount() {
-		return amount;
+	public int getAge() {
+		return age;
 	}
 
-	public void setAmount(double amount) {
-		this.amount = amount;
+	public void setAge(int age) {
+		this.age = age;
+	}
+
+	public Dojo getDojo() {
+		return dojo;
+	}
+
+	public void setDojo(Dojo dojo) {
+		this.dojo = dojo;
 	}
 
 	public Date getCreatedAt() {
@@ -115,12 +121,6 @@ public class Expense {
 	public void setUpdatedAt(Date updatedAt) {
 		this.updatedAt = updatedAt;
 	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    
+    
 }
