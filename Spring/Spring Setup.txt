@@ -1,4 +1,6 @@
-Spring Project
+Spring Project Template/Notes
+@ By Ben Lublin
+@ Last Updated: 6/16/2022 11:36pm
 
 1. Alt + Shift + N : Spring Starter Project
 
