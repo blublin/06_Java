@@ -102,36 +102,66 @@ Spring Project
 	a. new directory: WEB-INF
 	
 	b. all Dynamic views created in here (.jsp)
-		1. <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-			a. Java Server Page Tag library
-			b. Top of any .jsp file that needs tags
-		2. Bootstrap in <head>:
-			<!-- for Bootstrap CSS -->
-			<link rel="stylesheet" href="/webjars/bootstrap/css/bootstrap.min.css" />
-		3. ${variable} from server
-		4. c: syntax for semi-Java
+		3. ${variable} any variable from session, model, etc
+		4. c: syntax for JSTL
 		5. <% %> java lines
 			a. <%= %> in-line java (Ex: <%= i %> in for loop, <%= new Date() %>)
 
 
 6. src/main/java
-	a. New package: +.models
-		1. Non-annotated class Models (item, user, event, dojo, ninja, etc)
-		2. Ensure package export at top
+	a. new Package: +.repos
+			@Repository
+		1. New Interface extends CrudRepo<Model, IDType>
+			a. List<Model> findAll();
+			
+	b. new Service: +service
+			@Service
+		1. New Class
+			a. CRUD functionality
+				1. Find ALL returns a List<Model>
+				2. Find One returns an Optional.
+					A. optional.isPresent() (true if found or false)
+					B. optional.get() returns the found data
+				3. Create and Update both call modelRepo.save(model object)
+				4. Delete doesn't return anything
 		
-	b. New package: +.controllers
+	c. New package: +.models
+		1. @Entity
+		2. @Table(name="tableName")
+		3.	Private Member variables are table columns
+			a. Annotated by JPA Validation
+				@Entity: represents an entity model for our application
+				@Table: sets this as a table in the database
+				@Id: sets this as the primary key
+				@GeneratedValue: sets this as an auto-incrementing value
+				@Size adds validation that the column must be in the specified range
+				@Min adds validation that the column must be at least the specified value
+				@Max
+				@DecimalMin("0.0")
+				@DecimalMax
+				@NotNull adds validation that the column must be null
+				@PrePersist runs the method right before the object is created
+				@PreUpdate runs a method when the object is modified
+		
+	d. New package: +.controllers
 		1. Annotations
 			a. @RequestMapping("") (above method, like app.route()
 				1. value="route"
 				2. method="RequestMethod.GET
 				3. optional path variables: {variable} (/route/{variable})
 				
+				@GetMapping
+				@PostMapping
+				@DeleteMapping
+				@PutMapping
+				
 			b. @RequestParam(value, required), String searchQuery (in method signature)
 				1. Method signature :: value stored locally in searchQuery
 				2. value="q" :: string inserted after route (route?value=)
 				3. required=false (default true)
+			b.b @RequestParam("value") gets normal form input	
 				
-			c. @PathVariable("variable") String variable (in method signature)
+			c. @PathVariable String variable (in method signature) (needs to match the path {variable}
 				1. Method signature
 				2. match route variable, store as String variable
 				3. If other than string, try / catch
@@ -144,6 +174,18 @@ Spring Project
 				
 			e. @Controller class
 				1. returns view (.jsp page)
+			
+			f. @ModelAttribute("front-end-variable") ClassModel localVar
+				1. 1 line version of Model model to send a blank class object to a form:form
+				2. Also retrieves the model from the form:form in POST
+			
+			g. @Valid
+				1. prefaces @ModelAttribute in POST
+			
+			h. @BindingResult result
+				1. creates result object to test if there are errors
+				2. result.hasErrors()
+			
 				
 		2. Model model
 			a. a map interface that passes key-value pairs to the view
@@ -160,6 +202,8 @@ Spring Project
 					A. String value = (String) session.getAttribute("key")
 					A. Integer value = (Integer) session.getAttribute("key")
 				2. Use if null to check if the key exists before doing creating/updating
+		
+		4. @
 				
 7. src/main/resources > static
 	a. CSS, JavaScript
