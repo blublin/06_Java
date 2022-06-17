@@ -18,7 +18,7 @@ spring.mvc.view.prefix=/WEB-INF/
 # Data Persistence
 spring.datasource.url=jdbc:mysql://localhost:3306/<<YOUR-SCHEMA-HERE>>
 spring.datasource.username=root
-spring.datasource.password=root
+spring.datasource.password=root 	#On Mac OS X, it's likely rootroot
 spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
 spring.jpa.hibernate.ddl-auto=update
 # For Update and Delete method hidden inputs
@@ -260,68 +260,66 @@ public class ModelService {
 	* New Package: `com.name.project.controllers`
 	* New Interface: `ModelController` or `MainController` or `TheBigController`
 
+	* @RequestMapping("")
+		* value="route"
+		* method="RequestMethod.GET
+		* optional path variables: {variable} (/route/{variable})
+		* @GetMapping
+		* @PostMapping
+		* @DeleteMapping
+		* @PutMapping
+	* @RequestParam(value, required=true), String searchQuery (in method signature)
+		* Method signature :: value stored locally in searchQuery
+		* value="q" :: string inserted after route (route?value=)
+		* required=false (default true)
+		* from form keywords/name
+	* @PathVariable String variable (in method signature) (needs to match the path {variable}
+		* Method signature
+		* match route variable, store as String variable
+		* If other than string, try / catch
+			```		
+			NonStringType var;
+			try{
+				var = NonStringType.parseNonStringType(id);
+			}
+			catch (NumberFormatException ex){
+				ex.printStackTrace();
+				return "redirect:/models/new";
+			}
+			Model m = mServ.readOne(var);
+			model.addAttribute("model", m );
+			return "viewModel.jsp";
+			```
 
-* @RequestMapping("")
-	* value="route"
-	* method="RequestMethod.GET
-	* optional path variables: {variable} (/route/{variable})
-	
-	* @GetMapping
-	* @PostMapping
-	* @DeleteMapping
-	* @PutMapping
-	
-* @RequestParam(value, required=true), String searchQuery (in method signature)
-	* Method signature :: value stored locally in searchQuery
-	* value="q" :: string inserted after route (route?value=)
-	* required=false (default true)
-		* @RequestParam("value") gets normal form input	
-	
- @PathVariable String variable (in method signature) (needs to match the path {variable}
-	1. Method signature
-	2. match route variable, store as String variable
-	3. If other than string, try / catch
-		A. type variable
-		B. try variable = casted type
-		C. catch return some error message
-		
-d. @RestController class
-	1. string, JSON, xml returns
-	
-e. @Controller class
-	1. returns view (.jsp page)
+	* @RestController class
+		* string, JSON, xml returns
+	* @Controller class
+		* returns view (.jsp page)
 
-f. @ModelAttribute("front-end-variable") ClassModel localVar
-	1. 1 line version of Model model to send a blank class object to a form:form
-	2. Also retrieves the model from the form:form in POST
+	* @ModelAttribute("front-end-variable") ClassModel localVar
+		* 1 line version of Model model to send a blank class object to a form:form
+		* Also retrieves the model from the form:form in POST
+	* @Valid
+		* prefaces @ModelAttribute in POST
+	* @BindingResult result
+		* creates result object to test if there are errors
+		* result.hasErrors()
+	* Model model
+		* a map interface that passes key-value pairs to the view
+		* public String methodName(Model model)
+		* model.addAttribute("viewVariable", data)
+	* HttpSession session
+		* Method parameter
+		* import javax.servlet.http.HttpSession
+		* creates client cookie automatically
+		* session.setAttribute("key", value)
+		* session.getAttribute("key")
+			* Need to cast val as it's stored as Object data type
+				* String value = (String) session.getAttribute("key")
+				* Integer value = (Integer) session.getAttribute("key")
+			* Use if null to check if the key exists before doing creating/updating
 
-g. @Valid
-	1. prefaces @ModelAttribute in POST
-
-h. @BindingResult result
-	1. creates result object to test if there are errors
-	2. result.hasErrors()
-		
-			
-	2. Model model
-		a. a map interface that passes key-value pairs to the view
-		b. public String methodName(Model model)
-		b. model.addAttribute("viewVariable", data)
-	
-	3. HttpSession session
-		a. Method parameter
-		b. import javax.servlet.http.HttpSession
-		c. creates client cookie automatically
-		d. session.setAttribute("key", value)
-		e. session.getAttribute("key")
-			1. Need to cast val as it's stored as Object data type
-				A. String value = (String) session.getAttribute("key")
-				A. Integer value = (Integer) session.getAttribute("key")
-			2. Use if null to check if the key exists before doing creating/updating
-	
-	4. @
-				
-7. src/main/resources > static
-	a. CSS, JavaScript
-		1. static/css/style.css
-		2. static/js/app.js
+## 6 src/main/resources > static  
+* CSS, JavaScript
+	* static/css/style.css
+	* static/js/app.js
