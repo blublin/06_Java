@@ -1,6 +1,6 @@
 # Spring Project Template/Notes
 @ By Ben Lublin  
-@ Last Updated: 6/17/2022 11:45am
+@ Last Updated: 6/17/2022 2:00pm
 
 ## New Spring Starter Project  
 ## 1. Setup:
@@ -115,7 +115,7 @@ spring.mvc.hiddenmethod.filter.enabled=true
 			*(Ex: <%= i %> in for loop, <%= new Date() %>)
 
 ### .jsp template file
-####x` Set in Window > Preferences > Search for: jsp template > New JSP File (html 5)
+####  Set in Window > Preferences > Search for: jsp template > New JSP File (html 5)
 ```
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!-- c:out ; c:forEach etc. --> 
@@ -141,6 +141,94 @@ ${cursor}
 </body>
 </html>
 ```
+### Display One to Many (Dojo showing Dojo + ninjas)
+```
+<div class="container w-75 mx-auto">
+	<h1 class="text-center">${ model.getName() }</h1>
+	<table class="table table-borderless border border-2">
+		<thead>
+			<tr>
+				<td>Attribute 1</td>
+				<td>Attribute 2</td>
+				<td>Attribute 3</td>
+			</tr>
+		</thead>
+		<tbody>
+			<c:forEach items="${model.model2Many}" var="n">
+				<tr>
+					<td>${n.getAttribute1() }</td>
+					<td>${n.getAttribute2() }</td>
+					<td>${n.getAttribute3() }</td>
+				</tr>
+			</c:forEach>
+		</tbody>
+	</table>
+</div>
+```
+### Create One (Dojo)
+```
+<div class="container w-75 mx-auto">
+	<h1 class="text-center">New Model</h1>
+	<form:form action="/models/processForm" method="post" modelAttribute="model"
+		class="d-flex flex-column align-items-center border border-3 border-dark">
+		
+		<p>
+			<form:errors path="attribute1" cssClass="text-danger" />
+		</p>
+		<p class="d-flex">
+			<form:label class="col-5" path="attribute1">Attribute 1:</form:label>
+			<form:input class="col-12" path="attribute1" />
+		</p>
+		<input type="submit" value="Submit" class="col-3" />
+	</form:form>
+</div>
+```
+
+### Create Many (Ninjas) and Link to One
+```
+<div class="container w-75 mx-auto">
+	<h1 class="text-center">New Model</h1>
+	<form:form action="/model/processForm" method="post" modelAttribute="model"
+		class="d-flex flex-column align-items-center border border-3 border-dark">
+		<p>
+			<form:errors path="modelOne" cssClass="text-danger"/>
+		</p>
+		<p>
+			<form:select path="modelOne">
+				<c:forEach items="${modelOne}" var="m">
+					<option value="${m.getId() }">${m.getName()}</option>
+				</c:forEach>
+			</form:select>
+		</p>
+		
+		<p>
+			<form:errors path="attribute1" cssClass="text-danger" />
+		</p>
+		<p class="d-flex">
+			<form:label class="col-5" path="attribute1">attribute1:</form:label>
+			<form:input class="col-12" path="attribute1" />
+		</p>
+
+		<p>
+			<form:errors path="attribute2" cssClass="text-danger" />
+		</p>
+		<p class="d-flex">
+			<form:label class="col-5" path="attribute2">attribute2:</form:label>
+			<form:input class="col-12" path="attribute2" />
+		</p>
+
+		<p>
+			<form:errors path="attribute3" cssClass="text-danger" />
+		</p>
+		<p class="d-flex">
+			<form:label class="col-5" path="attribute3">attribute3:</form:label>
+			<form:input class="col-12" path="attribute3" />
+		</p>
+		<input type="submit" value="Submit" class="col-3" />
+	</form:form>
+</div>
+```
+
 
 ## 5. src/main/java
 * ### Model
@@ -170,6 +258,15 @@ public class Model {
     private Date createdAt;
     @DateTimeFormat(pattern="yyyy-MM-dd")
     private Date updatedAt;
+
+	//  MANY TO ONE
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="model2_id")
+    private Model model2;
+
+	//  ONE TO MANY
+    @OneToMany(mappedBy="model2", fetch = FetchType.LAZY)
+    private List<Model2> model2s;
 	
 //	Unique methods for created/updated
 	@PrePersist
@@ -318,6 +415,21 @@ public class ModelService {
 				* String value = (String) session.getAttribute("key")
 				* Integer value = (Integer) session.getAttribute("key")
 			* Use if null to check if the key exists before doing creating/updating
+	* Handle Post Forms
+	```
+	@PostMapping("/mdoels/processForm")
+	public String processForm(@Valid @ModelAttribute Model model,
+			BindingResult res) {
+		if (res.hasErrors()) {
+			return "newModel.jsp";
+		}
+		else {
+			mServ.create(model);
+			Long id = model.getId();
+			return "redirect:/models/" + id;
+		}
+	}
+	```
 
 ## 6 src/main/resources > static  
 * CSS, JavaScript
