@@ -18,7 +18,8 @@ spring.mvc.view.prefix=/WEB-INF/
 # Data Persistence
 spring.datasource.url=jdbc:mysql://localhost:3306/<<YOUR-SCHEMA-HERE>>
 spring.datasource.username=root
-spring.datasource.password=root 	#On Mac OS X, it's likely rootroot
+spring.datasource.password=root
+# On Mac OS X, it's likely rootroot
 spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
 spring.jpa.hibernate.ddl-auto=update
 # For Update and Delete method hidden inputs
@@ -265,10 +266,19 @@ public class Model {
     private Model model2;
 
 	//  ONE TO MANY
-    @OneToMany(mappedBy="model2", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy="model2MemberVariable", fetch = FetchType.LAZY)
     private List<Model2> model2s;
+
+	// ONE TO ONE (USES FOREIGN KEY)
+	@OneToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name="model2_id")
+    private Model2 model2;
+
+	// ONE TO ONE (PROVIDES KEY)
+	@OneToOne(mappedBy="model2MemberVariable", cascade=CascadeType.ALL, fetch=FetchType.LAZY)
+    private Model2 model2;
 	
-//	Unique methods for created/updated
+	//	Unique methods for created/updated
 	@PrePersist
 	protected void onCreate(){
 		this.createdAt = new Date();
@@ -277,6 +287,7 @@ public class Model {
 	protected void onUpdate(){
 		this.updatedAt = new Date();
 	}
+}
 ```
 * 
 	* **JPA Validations**
@@ -303,15 +314,12 @@ public class Model {
 public interface ModelRepository extends CrudRepository<Model, Long> {
 
 //	Overwrite findAll
-	List<Dojo> findAll();
+	List<Model> findAll();
 
 //	Add any extra custom queries
 //	https://docs.spring.io/spring-data/jpa/docs/current/reference/html/#jpa.query-methods
 //	https://docs.spring.io/spring-data/jpa/docs/current/reference/html/#jpa.query-methodss
 	Optional<Model> findByCol(Type var);
-
-//	Empty Constructor
-	public Model() {}
 }
 ```
 * ### Service (CRUD)
@@ -331,8 +339,8 @@ public class ModelService {
 
 //	|--- Get One By ID ---|
 	public Model readOne(Long id) {
-		Optional<Dojo> dojoOpt = dRep.findById(id);
-		return dojoOpt.isPresent() ? dojoOpt.get() : null;
+		Optional<Model> modelOpt = mRep.findById(id);
+		return modelOpt.isPresent() ? modelOpt.get() : null;
 	}
 
 //	|--- Create One ---|
