@@ -40,6 +40,7 @@ public class User {
     @Size(min=8, max=128, message="Password must be between 8 and 128 characters")
     private String password;
     
+    //	NEVER SAVED IN DATABASE    
     @Transient
     @NotEmpty(message="Confirm Password is required!")
     @Size(min=8, max=128, message="Confirm Password must be between 8 and 128 characters")
@@ -53,6 +54,7 @@ public class User {
     private Date updatedAt;
     
 	//  ONE TO MANY
+    //	Mapped to the Many model Member Variable "poster"
     @OneToMany(mappedBy="poster", fetch = FetchType.LAZY)
     private List<Book> books;
   

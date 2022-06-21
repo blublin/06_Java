@@ -47,6 +47,7 @@ public class Book {
 
 	//  MANY TO ONE
     @ManyToOne(fetch = FetchType.LAZY)
+    // SQL column created to store the foreign key of the One model
     @JoinColumn(name="poster_id")
     private User poster;
 	

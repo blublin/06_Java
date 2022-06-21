@@ -41,7 +41,10 @@ public class BookService {
 	}
 
 //	|--- Update One ---|
-	public Book updateOne(Book b) {
+	public Book updateOne(Book b, BindingResult result) {
+		if (result.hasErrors()) {
+			return null;
+		}
 		return bRep.save(b);
 	}
 

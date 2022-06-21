@@ -3,7 +3,7 @@ package com.ben.bookClub.models;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
-
+// NOTENTITY
 public class LoginUser {
     
     @NotEmpty(message="Email is required!")

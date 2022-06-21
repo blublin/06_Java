@@ -20,17 +20,33 @@
 <script src="/webjars/bootstrap/js/bootstrap.min.js"></script>
 </head>
 <body>
-	<%-- Register --%>
+	<%-- New Book --%>
 	<div class="container w-75 mx-auto">
-		<div class="container d-flex align-items-center justify-content-between">
-			<h1>Add a book to your shelf</h1>
-			<a href="/books">Back to the shelves</a>
+		<div
+			class="container d-flex align-items-center justify-content-between">
+
+			<c:if test="${edit }">
+				<h1>Edit Book</h1>
+			</c:if>
+
+			<c:if test="${edit eq null }">
+				<h1>Add a book to your shelf!</h1>
+				<a href="/dashboard">Return to the Shelf</a>
+				<!-- <p>User ID Test: ${user.getUserName() } ${user.getId() }</p> -->
+			</c:if>
+
 		</div>
-		<p>User ID Test: ${user.getUserName() } ${user.getId() }</p>
-		<form:form action="/books/process" method="post" modelAttribute="book"
+		<form:form action="/books/process${edit ? '/' : '' }${edit ? book.getId() : '' }" method="post" modelAttribute="book"
 			class="d-flex flex-column align-items-center border border-3 border-dark">
+			<c:if test="${edit }">
+				<!-- IF EDIT, NOT CREATE, SET TO METHOD TO PUT -->
+				<input type="hidden" name="_method" value="put">
+				<!-- include id of already existing book -->
+				<form:hidden path="id" />
+			</c:if>
+
 			<!-- INCLUDE USER AS POSTER WITH HIDDEN VALUE -->
-			<form:hidden path="poster" value="${user.getId() }" />
+			<form:hidden path="poster" value="${user_id }" />
 			<p>
 				<form:errors path="title" cssClass="text-danger" />
 			</p>

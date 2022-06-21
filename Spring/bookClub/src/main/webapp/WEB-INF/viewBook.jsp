@@ -43,7 +43,7 @@
 		</div>
 		<hr />
 		<c:if test="${book.getPoster().getId() eq user_id }">
-			<button class="btn btn-primary">Edit</button>
+			<a href="/books/${book.getId() }/edit" class="btn btn-primary">Edit</a>
 		</c:if>
 	</div>
 </body>
