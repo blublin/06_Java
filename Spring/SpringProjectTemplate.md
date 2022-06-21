@@ -229,6 +229,77 @@ ${cursor}
 	</form:form>
 </div>
 ```
+* Login / Registration Forms, 1 page
+```
+<h2 class="text-center">Welcome!</h2>
+<div class="container w-75 mx-auto d-flex">
+
+	
+	<%-- Register --%>
+	<div class="container w-75 mx-auto">
+		<h1 class="text-center">Register</h1>
+		<form:form action="/register" method="post" modelAttribute="regObj"
+			class="d-flex flex-column align-items-center border border-3 border-dark">
+			<p>
+				<form:errors path="userName" cssClass="text-danger" />
+			</p>
+			<p class="d-flex">
+				<form:label class="col-5" path="userName">Username:</form:label>
+				<form:input class="col-10" path="userName" />
+			</p>
+
+			<p>
+				<form:errors path="email" cssClass="text-danger" />
+			</p>
+			<p class="d-flex">
+				<form:label class="col-5" path="email">Email:</form:label>
+				<form:input class="col-10" path="email" />
+			</p>
+
+			<p>
+				<form:errors path="password" cssClass="text-danger" />
+			</p>
+			<p class="d-flex">
+				<form:label class="col-5" path="password">Password:</form:label>
+				<form:input class="col-10" path="password" />
+			</p>
+
+			<p>
+				<form:errors path="confirm" cssClass="text-danger" />
+			</p>
+			<p class="d-flex">
+				<form:label class="col-5" path="confirm">Confirm Password:</form:label>
+				<form:input class="col-10" path="confirm" />
+			</p>
+			<input type="submit" value="Submit" class="col-3" />
+		</form:form>
+	</div>
+	
+	<%-- Login --%>
+	<div class="container w-75 mx-auto">
+		<h1 class="text-center">Login</h1>
+		<form:form action="/login" method="post" modelAttribute="loginObj"
+			class="d-flex flex-column align-items-center border border-3 border-dark">
+			<p>
+				<form:errors path="email" cssClass="text-danger" />
+			</p>
+			<p class="d-flex">
+				<form:label class="col-5" path="email">Email:</form:label>
+				<form:input class="col-10" path="email" />
+			</p>
+
+			<p>
+				<form:errors path="password" cssClass="text-danger" />
+			</p>
+			<p class="d-flex">
+				<form:label class="col-5" path="password">Password:</form:label>
+				<form:input class="col-10" path="password" />
+			</p>
+			<input type="submit" value="Submit" class="col-3" />
+		</form:form>
+	</div>
+</div>
+```
 
 
 ## 5. src/main/java
@@ -289,6 +360,41 @@ public class Model {
 	}
 }
 ```
+* Login Model
+```
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Size;
+
+public class LoginUser {
+    
+    @NotEmpty(message="Email is required!")
+    @Email(message="Please enter a valid email!")
+    private String email;
+    
+    @NotEmpty(message="Password is required!")
+    @Size(min=8, max=128, message="Password must be between 8 and 128 characters")
+    private String password;
+    
+    public LoginUser() {}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+}
+```
 * 
 	* **JPA Validations**
 	* @Entity: represents an entity model for our application
@@ -331,6 +437,56 @@ public class ModelService {
 
 	@Autowired
 	private ModelRepository mRep;
+
+//	Register User
+	public User register(User userFromReg, BindingResult result) {
+        
+        // Reject if email is taken (present in database)
+    	Optional<User> userCheck = uRep.findByEmail( userFromReg.getEmail() );
+    	if (userCheck.isPresent()) {
+    		result.rejectValue("email", "regError", "Email already exists");
+    		//	Test if identical keywords work    		
+    		result.rejectValue("email", "regError", "Email already exists STILL");
+    	}
+    	
+        // Reject if password doesn't match confirmation
+    	if(!userFromReg.getPassword().equals(userFromReg.getConfirm())) {
+    	    result.rejectValue("confirm", "Matches", "The Confirm Password must match Password!");
+    	}
+    	
+        // Return null if result has errors
+    	if (result.hasErrors()) {
+    		return null;
+    	}
+    
+    	//	No Errors found, register user    	
+        // Hash and set password
+    	String hashedPassword = BCrypt.hashpw(userFromReg.getPassword(), BCrypt.gensalt());
+    	userFromReg.setPassword(hashedPassword);
+    	// Save user to database
+    	User validUser = uRep.save(userFromReg);
+        return validUser;
+    }
+
+//	Login User
+    public User login(LoginUser userFromLogin , BindingResult result) {
+    	
+    	Optional<User> userCheck = uRep.findByEmail( userFromLogin.getEmail() );
+    	//	Check if user exists    	
+    	if (userCheck.isEmpty()) {
+    		result.rejectValue("email", "loginError", "Invalid Login");
+    		return null;
+    	}
+    	//	And check if passwords match    	
+    	else if( !BCrypt.checkpw( userFromLogin.getPassword(), userCheck.get().getPassword() )) {
+    	    result.rejectValue("password", "loginError", "Invalid Login");
+            return null;
+    	}
+    	else {
+    		//	Login Email and Password match
+    		return userCheck.get();
+    	}
+	}
 
 //	|--- Get All ---|
 	public List<Model> getAll() {
@@ -437,6 +593,63 @@ public class ModelService {
 			return "redirect:/models/" + id;
 		}
 	}
+	```
+
+	*  Login / Register GET Route
+	```
+	@GetMapping("/")
+    public String index(Model model) {
+    
+        // Bind empty User and LoginUser objects to the JSP
+        // to capture the form input
+        model.addAttribute("regObj", new User()); // This goes to the register form
+        model.addAttribute("loginObj", new LoginUser()); // This goes to the login form
+        return "loginReg.jsp";
+    }
+	```
+	* Register POST Route
+	```
+	@PostMapping("/register")
+    public String register(@Valid @ModelAttribute("newUser") User newUser, 
+            BindingResult result, Model model, HttpSession seshRogen) {
+        
+    	//	Use Service to validate and conditionally register 
+    	User validUser = uServ.register(newUser, result);
+ 
+        // to do some extra validations and create a new user!
+        if (validUser == null || result.hasErrors() ) {
+    		//	Re-rendering, need to provide another newLogin object.
+        	model.addAttribute("newLogin", new LoginUser());
+    		//	newUser from ModelAttribute still exists and will be sent forward
+    		return "index.jsp";
+    	}        	
+        
+        // No errors!
+        //	Store user ID in session        
+        seshRogen.setAttribute("user_id", newUser.getId());
+    
+        return "redirect:/home";
+    }
+	```
+	* Login POST Route
+	```
+	@PostMapping("/login")
+    public String login(@Valid @ModelAttribute("newLogin") LoginUser newLogin, 
+            BindingResult bRes, Model model, HttpSession seshRogen) {
+        
+        // Add once service is implemented:
+		User userCheck = uServ.login(newLogin, bRes);
+		
+        if(userCheck == null || bRes.hasErrors()) {
+            model.addAttribute("newUser", new User());
+            return "index.jsp";
+        }
+        // No errors! 
+		// Store user ID in session        
+        seshRogen.setAttribute("user_id", userCheck.getId());
+   
+        return "redirect:/home";
+    }
 	```
 
 ## 6 src/main/resources > static  
