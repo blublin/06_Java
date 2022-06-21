@@ -29,6 +29,10 @@ public class Book {
     @NotNull
     @Size(min = 2, max = 60, message="Title must be between 2 and 60 characters")
 	private String title;
+    
+    @NotNull
+    @Size(min = 8, max = 50, message="An actual name, not gibberish or made up things")
+    private String author;
 
     @NotNull
     @Size(max = 500, message="Title must be 500 or less characters")
@@ -68,6 +72,12 @@ public class Book {
 	}
 	public void setTitle(String title) {
 		this.title = title;
+	}
+	public String getAuthor() {
+		return author;
+	}
+	public void setAuthor(String author) {
+		this.author = author;
 	}
 	public String getThoughts() {
 		return thoughts;

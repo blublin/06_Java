@@ -25,9 +25,9 @@ public class UserController {
     
         // Bind empty User and LoginUser objects to the JSP
         // to capture the form input
-        model.addAttribute("newUser", new User());
-        model.addAttribute("newLogin", new LoginUser());
-        return "index.jsp";
+        model.addAttribute("regObj", new User()); // This goes to the register form
+        model.addAttribute("loginObj", new LoginUser()); // This goes to the login form
+        return "loginReg.jsp";
     }
     
     @PostMapping("/register")
@@ -49,7 +49,7 @@ public class UserController {
         //	Store user ID in session        
         seshRogen.setAttribute("user_id", newUser.getId());
     
-        return "redirect:/home";
+        return "redirect:/dashboard";
     }
     
     @PostMapping("/login")
@@ -67,6 +67,6 @@ public class UserController {
 //    	Store user ID in session        
         seshRogen.setAttribute("user_id", userCheck.getId());
    
-        return "redirect:/home";
+        return "redirect:/dashboard";
     }
 }
