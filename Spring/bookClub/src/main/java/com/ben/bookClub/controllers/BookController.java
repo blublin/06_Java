@@ -11,6 +11,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import com.ben.bookClub.models.Book;
@@ -26,7 +27,7 @@ public class BookController {
 	@Autowired
 	private UserService uServ;
 	
-	@GetMapping("/dashboard")
+	@GetMapping(value={"/books", "/dashboard"})
 	public String books(Model model, HttpSession seshRogen) {
 		// Explicitly cast session Object to type		
 		Long userId = (Long) seshRogen.getAttribute("user_id");
@@ -86,5 +87,32 @@ public class BookController {
     	}        	
     
         return "redirect:/dashboard";
+    }
+    
+    @GetMapping("/books/{id}")
+    public String viewBook(@PathVariable String id,
+    						HttpSession seshRogen,
+    						Model model) {
+		// Explicitly cast session Object to type		
+		Long userId = (Long) seshRogen.getAttribute("user_id");
+		// Route protect		
+		if (userId == null) {
+			return "redirect:/";
+		}
+		
+		// Read PathVariable as String so no errors		
+		 Long var;
+		 try{
+			 // Try to parse as Long			 
+		 	var = Long.parseLong(id);
+		 }
+		 //	If fail, print the error and render dashboard		 
+		 catch (NumberFormatException ex){
+		 	ex.printStackTrace();
+		 	return "redirect:/dashboard";
+		 }
+		 Book b = bServ.readOne(var);
+		 model.addAttribute("book", b );
+		 return "viewBook.jsp";
     }
 }

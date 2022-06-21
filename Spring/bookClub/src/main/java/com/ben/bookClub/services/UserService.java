@@ -24,8 +24,6 @@ public class UserService {
     	Optional<User> userCheck = uRep.findByEmail( userFromReg.getEmail() );
     	if (userCheck.isPresent()) {
     		result.rejectValue("email", "regError", "Email already exists");
-    		//	Test if identical keywords work    		
-    		result.rejectValue("email", "regError", "Email already exists STILL");
     	}
     	
         // Reject if password doesn't match confirmation

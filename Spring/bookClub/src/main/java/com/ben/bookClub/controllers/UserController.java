@@ -31,42 +31,48 @@ public class UserController {
     }
     
     @PostMapping("/register")
-    public String register(@Valid @ModelAttribute("newUser") User newUser, 
+    public String register(@Valid @ModelAttribute("regObj") User regObj, 
             BindingResult result, Model model, HttpSession seshRogen) {
         
     	//	Use Service to validate and conditionally register 
-    	User validUser = uServ.register(newUser, result);
+    	User validUser = uServ.register(regObj, result);
  
         // to do some extra validations and create a new user!
         if (validUser == null || result.hasErrors() ) {
     		//	Re-rendering, need to provide another newLogin object.
-        	model.addAttribute("newLogin", new LoginUser());
+        	model.addAttribute("loginObj", new LoginUser());
     		//	newUser from ModelAttribute still exists and will be sent forward
-    		return "index.jsp";
+    		return "loginReg.jsp";
     	}        	
         
         // No errors!
         //	Store user ID in session        
-        seshRogen.setAttribute("user_id", newUser.getId());
+        seshRogen.setAttribute("user_id", regObj.getId());
     
         return "redirect:/dashboard";
     }
     
     @PostMapping("/login")
-    public String login(@Valid @ModelAttribute("newLogin") LoginUser newLogin, 
+    public String login(@Valid @ModelAttribute("loginObj") LoginUser loginObj, 
             BindingResult bRes, Model model, HttpSession seshRogen) {
         
         // Add once service is implemented:
-		User userCheck = uServ.login(newLogin, bRes);
+		User userCheck = uServ.login(loginObj, bRes);
 		
         if(userCheck == null || bRes.hasErrors()) {
-            model.addAttribute("newUser", new User());
-            return "index.jsp";
+            model.addAttribute("regObj", new User());
+            return "loginReg.jsp";
         }
         // No errors! 
 //    	Store user ID in session        
         seshRogen.setAttribute("user_id", userCheck.getId());
    
         return "redirect:/dashboard";
+    }
+    
+    @GetMapping("/logout")
+    public String logout(HttpSession seshRogen) {
+    	seshRogen.invalidate();
+    	return "redirect:/";
     }
 }
