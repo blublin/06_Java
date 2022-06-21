@@ -300,6 +300,8 @@ ${cursor}
 	</div>
 </div>
 ```
+* If Edit (PUT), place this line below initial form:form.
+	* `<input type="hidden" name="_method" value="put">`
 
 
 ## 5. src/main/java
