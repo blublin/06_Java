@@ -111,6 +111,14 @@ spring.mvc.hiddenmethod.filter.enabled=true
 * all Dynamic views created in here (.jsp)
 	* ${variable} any variable from session, model, etc
 	* c: syntax for JSTL
+		* <c:if test=""></c:if>
+		* <c:choose>
+			* <c:when test=""></c:when>
+			* <c:otherwise></c:otherwise>
+		* </c:choose>
+		* <c:forEach items="${iterableVariable}" var="">
+		* <c:out value="" />
+
 	* <% %> java lines
 		* <%= %> in-line java
 			*(Ex: <%= i %> in for loop, <%= new Date() %>)
@@ -350,6 +358,15 @@ public class Model {
 	// ONE TO ONE (PROVIDES KEY)
 	@OneToOne(mappedBy="model2MemberVariable", cascade=CascadeType.ALL, fetch=FetchType.LAZY)
     private Model2 model2;
+
+	// MANY TO MANY
+	@ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+        name = "thisModels_foreignModels", 
+        joinColumns = @JoinColumn(name = "thisModel_id"), 
+        inverseJoinColumns = @JoinColumn(name = "foreignModel_id")
+    )     
+    private List<ForeignModel> foreignModel;
 	
 	//	Unique methods for created/updated
 	@PrePersist
@@ -428,6 +445,14 @@ public interface ModelRepository extends CrudRepository<Model, Long> {
 //	https://docs.spring.io/spring-data/jpa/docs/current/reference/html/#jpa.query-methods
 //	https://docs.spring.io/spring-data/jpa/docs/current/reference/html/#jpa.query-methodss
 	Optional<Model> findByCol(Type var);
+
+    // Retrieves a list of all thisModel for a particular foreignModel
+    List<thisModel> findAllByForeignModel(ForeignModel foreignModel);
+    
+    // Retrieves a list of any thisMOdel a particular foreignModel
+    // does not belong to.
+    List<thisModel> findByForeignModelNotContains(ForeignModel foreignModel);
+
 }
 ```
 * ### Service (CRUD)
@@ -517,8 +542,21 @@ public class ModelService {
 	}
 }
 ```	
-
-	
+* //	|--- Many To Many ---|
+* From your Service, adding a relationship between two existing records involves a couple steps:
+	* Fetch both the specific product and category out of the database, and assigning the returned object instances to variables.
+	* Add the product to the products list for that category. Remember, products is a member variable in the Category class. 
+	* Save the category object.
+	* List methods to modify data
+		* .get() List
+		* .add(valutToAdd)
+		* .contains(value) returns true/false
+	* ```
+		// Add foreign model object to this model List
+		thisModel.getForeignModel().add(foreignModel);
+		// Save updated thisModel
+    	modelRepo.save(thisModel);
+	```
 * ### Controller
 	* New Package: `com.name.project.controllers`
 	* New Interface: `ModelController` or `MainController` or `TheBigController`
